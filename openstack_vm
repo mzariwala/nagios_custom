@@ -1,0 +1,33 @@
+#!/bin/sh
+# Created Date: 4/11/2014
+# Nagios nrpe plugin for openstack. This plugin checks each openstack vm if they are showing active or not
+#
+set -e
+export OS_TENANT_NAME=?
+export OS_AUTH_URL=?
+export OS_USERNAME=?
+export OS_PASSWORD=?
+
+CMD=$(nova list --all-tenants --fields host,name,status | egrep -v "+---------|ID" | awk -F'|' '{print $2,$3,$4,$5}')
+echo "$CMD" | while read ID  HOST VM STATUS
+do
+case $STATUS in
+ERROR)
+echo "CRITICAL -  $VM on $HOST is currently in $STATUS state"
+exit 2
+;;
+
+SUSPENDED)
+echo "CRITICAL -  $VM on $HOST is currently in $STATUS state"
+exit 2
+;;
+
+PAUSED)
+echo "WARNING -  $VM on $HOST is currently in $STATUS state"
+exit 1
+;;
+
+esac
+done
+echo "OK - all vm's are in OK state"
+exit 0
