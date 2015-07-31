@@ -1,0 +1,17 @@
+######ALL#####
+
+command[check_load]=/usr/lib64/nagios/plugins/check_load -w 15,10,5 -c 30,25,20
+command[check_zombie_procs]=/usr/lib64/nagios/plugins/check_procs -w 5 -c 10 -s Z
+command[check_all_disks]=/usr/lib64/nagios/plugins/check_disk -w '10%' -c '5%'  
+command[check_ram]=/usr/lib64/nagios/plugins/check_mem 20 10
+command[check_ntp]=/usr/lib64/nagios/plugins/check_ntp_time -H <%= @hostname %> -w 0.5 -c 1
+command[check_pe-puppet]=/usr/lib64/nagios/plugins/check_exit_status -s /etc/init.d/pe-puppet
+
+#
+#
+#####mysql######
+#
+command[check_mysql]=/usr/lib64/nagios/plugins/check_mysql_health --username <%= @username %> --password <%= @password %> --socket <%= socket %> --mode connection-time
+command[check_mysql_cache-hitrate]=/usr/lib64/nagios/plugins/check_mysql_health --username <%= @username %> --password <%= @password %> --socket <%= socket %> --mode querycache-hitrate
+#
+#
